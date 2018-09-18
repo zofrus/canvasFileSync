@@ -5,7 +5,6 @@ const { shell, remote, ipcRenderer } = require("electron");
 const currentWindow = remote.getCurrentWindow();
 const path = require("path");
 const mainProcess = remote.require(path.join(__dirname, "../main.js"));
-const startButton = document.querySelector("#start-sync");
 const chooseDirectoryButton = document.querySelector("#chooseDirectory");
 const chooseDirectoryError = document.querySelector("#choose-directory-error");
 const instructure = document.querySelector("#instructure");
@@ -16,6 +15,34 @@ window.$ = window.jQuery = require('jquery');
 require("./crashReporter");
 let rootDir = "";
 log.info("in renderer");
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue!',
+    manual: false,
+    devKey: ""
+  },
+  methods: {
+    toggleManual () {
+      this.manual = !this.manual;
+    },
+    go () {
+      console.log('clicked go')
+      console.log(instructure.value)
+      if (instructure.value !== "" && instructure.value.includes(".")) {
+        console.log('in here')
+        goLogin()
+      }
+    },
+    goLogin () {
+      go.classList.add('is-loading');
+      log.info('Renderer: getting auth token');
+      mainProcess.getAuthToken(currentWindow, instructure.value);
+      log.info('got auth token')
+    }
+  }
+})
 
 
 function charsAllowed(value) {
@@ -57,11 +84,11 @@ instructure.addEventListener('keyup', function (e) {
     }
 });
 
-go.addEventListener("click", () => {
-    if (instructure.value !== "" && instructure.value.includes(".")) {
-        goLogin()
-    }
-});
+// go.addEventListener("click", () => {
+//     if (instructure.value !== "" && instructure.value.includes(".")) {
+//         goLogin()
+//     }
+// });
 
 const goLogin = () => {
   go.classList.add('is-loading');
