@@ -1,7 +1,8 @@
 // import { dialog } from 'electron'; // eslint-disable-line
 import router from '../../router/index';
 import { ipcRenderer } from 'electron'; // eslint-disable-line
-const canvasIntegration = require('../../../utils/canvasIntegration');
+const canvasIntegrationFile = require('../../../utils/canvasIntegration');
+const canvasIntegration = canvasIntegrationFile.default;
 const path = require('path');
 
 const state = {
@@ -32,6 +33,15 @@ const mutations = {
       state.filesMap[index].path = path.join(state.rootFolder, course.name);
     });
   },
+  FIND_SET_SYNCABLE_COURSES(state) {
+    state.filesMap.forEach(async (courseItem) => {
+      const syncable = await canvasIntegration.hasAccessToFilesAPI(state.rootURL,
+        courseItem.id,
+        state.authToken);
+      console.log(syncable);
+      courseItem.sync = syncable;
+    });
+  },
   SET_ROOT_URL(state, payload) {
     state.rootURL = payload.rootURL;
   },
@@ -50,7 +60,7 @@ const actions = {
   },
   connect({ commit }, payload) {
     commit('SET_CONNECTION_PARAMETERS', payload);
-    canvasIntegration.default.getActiveCanvasCourses(
+    canvasIntegration.getActiveCanvasCourses(
       payload.rootURL, payload.authToken).then((response) => {
       if (response.success) {
         console.log(response);
@@ -72,6 +82,7 @@ const actions = {
     commit('SET_ROOT_FOLDER', payload.rootFolder);
     commit('SET_COURSE_PATHS');
     commit('SET_SYNC_FREQUENCY', payload.syncFrequency);
+    commit('FIND_SET_SYNCABLE_COURSES');
     router.push('./progress');
   },
   goUniversityLogin({ commit }, payload) {

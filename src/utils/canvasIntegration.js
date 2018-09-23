@@ -3,13 +3,13 @@ const log = require('electron-log');
 
 const getActiveCanvasCourses = async (
   accountDomain,
-  developerKey,
+  authToken,
 ) => {
   try {
     const options = {
       method: 'GET',
       uri: `http://${accountDomain}/api/v1/users/self/courses?enrollment_state=active`,
-      headers: { Authorization: `Bearer ${developerKey}` },
+      headers: { Authorization: `Bearer ${authToken}` },
       json: true,
       encoding: null,
     };
@@ -27,4 +27,23 @@ const getActiveCanvasCourses = async (
   }
 };
 
-export default { getActiveCanvasCourses };
+const hasAccessToFilesAPI = async (rootURL, courseID, authToken) => {
+  const options = {
+    method: 'GET',
+    uri: `http://${rootURL}/api/v1/courses/${courseID}/files?sort=updated_at&order=desc`,
+    headers: { Authorization: `Bearer ${authToken}` },
+    json: true,
+    encoding: null,
+  };
+  try {
+    await request(options);
+    return true;
+  } catch (err) {
+    if (err === 'StatusCodeError: 401 - {"status":"unauthorized","errors":[{"message":"user not authorized to perform that action"}]}') {
+      return false;
+    } log.error(err);
+  }
+  return false;
+};
+
+export default { getActiveCanvasCourses, hasAccessToFilesAPI };
