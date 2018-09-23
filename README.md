@@ -6,7 +6,7 @@ When using Canvas, I found that constantly downloading new files, updated files 
 
 ## Running this code
 
-Clone this repository and run `npm i`. Once it's done installing the modules, run `npm run start`
+Clone this repository and run `npm i`. Once it's done installing the modules, run `npm run dev`
 
 ## Getting Started
 
