@@ -41,6 +41,7 @@
                       v-model="authToken"
                       type="text"
                       prepend-icon="vpn_key"
+                      @keyup.enter="connect"
                       required
                     ></v-text-field>
                   </v-flex>

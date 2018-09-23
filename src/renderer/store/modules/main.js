@@ -2,6 +2,7 @@
 import router from '../../router/index';
 import { ipcRenderer } from 'electron'; // eslint-disable-line
 const canvasIntegration = require('../../../utils/canvasIntegration');
+const path = require('path');
 
 const state = {
   main: 0,
@@ -26,6 +27,11 @@ const mutations = {
   SET_ROOT_FOLDER(state, payload) {
     state.rootFolder = payload;
   },
+  SET_COURSE_PATHS(state) {
+    state.filesMap.forEach((course, index) => {
+      state.filesMap[index].path = path.join(state.rootFolder, course.name);
+    });
+  },
   SET_ROOT_URL(state, payload) {
     state.rootURL = payload.rootURL;
   },
@@ -49,7 +55,13 @@ const actions = {
       if (response.success) {
         console.log(response);
         response.response.forEach((courseItem) => {
-          const course = { uuid: courseItem.uuid, id: courseItem.id, name: courseItem.name };
+          const course = { uuid: courseItem.uuid,
+            id: courseItem.id,
+            sync: true,
+            path: '',
+            name: courseItem.name.split('|')[0].trim(),
+            items: [],
+          };
           commit('ADD_COURSE', course);
         });
         router.push('./configure');
@@ -58,6 +70,7 @@ const actions = {
   },
   beginInitialSync({ commit }, payload) {
     commit('SET_ROOT_FOLDER', payload.rootFolder);
+    commit('SET_COURSE_PATHS');
     commit('SET_SYNC_FREQUENCY', payload.syncFrequency);
     router.push('./progress');
   },
