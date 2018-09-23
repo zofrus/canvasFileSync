@@ -104,8 +104,6 @@
           json: true,
         };
         request(options).then((res) => {
-          console.log(res);
-          console.log(res.length);
           this.count = res.length;
           this.schools = res;
         }).catch((err) => {

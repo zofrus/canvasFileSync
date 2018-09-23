@@ -9,6 +9,7 @@ const state = {
   rootURL: null,
   rootFolder: null,
   syncFrequency: null,
+  filesMap: [],
 };
 
 const mutations = {
@@ -19,7 +20,6 @@ const mutations = {
     state.main += 1;
   },
   SET_CONNECTION_PARAMETERS(state, payload) {
-    console.log(payload);
     state.authToken = payload.authToken;
     state.rootURL = payload.rootURL;
   },
@@ -31,6 +31,9 @@ const mutations = {
   },
   SET_SYNC_FREQUENCY(state, payload) {
     state.syncFrequency = payload;
+  },
+  ADD_COURSE(state, payload) {
+    state.filesMap.push(payload);
   },
 };
 
@@ -44,6 +47,11 @@ const actions = {
     canvasIntegration.default.getActiveCanvasCourses(
       payload.rootURL, payload.authToken).then((response) => {
       if (response.success) {
+        console.log(response);
+        response.response.forEach((courseItem) => {
+          const course = { uuid: courseItem.uuid, id: courseItem.id, name: courseItem.name };
+          commit('ADD_COURSE', course);
+        });
         router.push('./configure');
       }
     });
