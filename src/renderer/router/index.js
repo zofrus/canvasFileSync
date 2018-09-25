@@ -7,8 +7,14 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'Home',
+      component: require('@/components/Home').default,
+    },
+    {
+      path: '/login/:url',
       name: 'Login',
       component: require('@/components/Login').default,
+      props: true,
     },
     {
       path: '*',

@@ -1,6 +1,5 @@
 // import { dialog } from 'electron'; // eslint-disable-line
 import router from '../../router/index';
-import { ipcRenderer } from 'electron'; // eslint-disable-line
 const canvasIntegrationFile = require('../../../utils/canvasIntegration');
 const canvasIntegration = canvasIntegrationFile.default;
 const path = require('path');
@@ -87,7 +86,13 @@ const actions = {
   },
   goUniversityLogin({ commit }, payload) {
     commit('SET_ROOT_URL', payload);
-    ipcRenderer.send('go-university-login', payload.rootURL);
+    router.push(`./login/http://${payload.rootURL}`);
+  },
+};
+
+const getters = {
+  rootURL(state) {
+    return state.rootURL;
   },
 };
 
@@ -95,4 +100,5 @@ export default {
   state,
   mutations,
   actions,
+  getters,
 };
