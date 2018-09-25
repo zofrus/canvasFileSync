@@ -1,5 +1,6 @@
 <template>
   <v-content>
+    <webview id="foo" partition="persist::uvu" src="https://www.uvu.edu/" style="display:inline-flex; width:640px; height:480px"></webview>
     <v-layout row justify-center id="wrapper">
       <v-flex xs12 class="text-xs-center centered">
         <img id="logo" class="logo" src="~@/assets/icons_normal/icons/logo.svg" alt="electron-vue">
@@ -68,6 +69,11 @@
       </v-flex>
       <v-flex xs3></v-flex>
     </v-layout>
+    <v-btn
+      @click="getCookies"
+    >
+    Get Cookies
+    </v-btn>
   </v-content>
 </template>
 
@@ -136,6 +142,19 @@
             console.error(err);
           }
         }
+      },
+      getCookies() {
+        const webview = document.querySelector('webview');
+        console.log(webview);
+        const webviewSession = webview.getWebContents().session;
+        console.log(webviewSession);
+        console.log(this.$electron);
+        const cookies = this.$electron.remote.session.fromPartition('uvu').cookies;
+        console.log(cookies);
+        cookies.get({}, async (error, cookies) => {
+          console.log(error);
+          console.log(cookies);
+        });
       },
     },
   };

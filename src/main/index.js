@@ -22,6 +22,7 @@ function createWindow() {
     height: 563,
     useContentSize: true,
     width: 1000,
+    webPreferences: { webSecurity: false },
   });
 
   mainWindow.loadURL(winURL);
@@ -46,7 +47,7 @@ ipcMain.on('choose-folder', (event) => {
 
 ipcMain.on('go-university-login', (event, url) => {
   console.log(event);
-  mainWindow.loadURL(`http://${url}`);
+  mainWindow.loadURL(`https://${url}`);
 });
 
 app.on('activate', () => {
