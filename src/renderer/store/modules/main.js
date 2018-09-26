@@ -44,6 +44,9 @@ const mutations = {
   SET_ROOT_URL(state, payload) {
     state.rootURL = payload.rootURL;
   },
+  SET_AUTH_TOKEN(state, payload) {
+    state.authToken = payload;
+  },
   SET_SYNC_FREQUENCY(state, payload) {
     state.syncFrequency = payload;
   },
@@ -57,10 +60,12 @@ const actions = {
     // do something async
     commit('INCREMENT_MAIN_COUNTER');
   },
-  connect({ commit }, payload) {
-    commit('SET_CONNECTION_PARAMETERS', payload);
+  connect({ commit }) {
+    console.log('in connect');
+    console.log(state.rootURL);
+    console.log(state.authToken);
     canvasIntegration.getActiveCanvasCourses(
-      payload.rootURL, payload.authToken).then((response) => {
+      state.rootURL, state.authToken).then((response) => {
       if (response.success) {
         console.log(response);
         response.response.forEach((courseItem) => {
@@ -73,7 +78,7 @@ const actions = {
           };
           commit('ADD_COURSE', course);
         });
-        router.push('./configure');
+        router.push('/configure');
       }
     });
   },
@@ -86,7 +91,7 @@ const actions = {
   },
   goUniversityLogin({ commit }, payload) {
     commit('SET_ROOT_URL', payload);
-    router.push(`./login/http://${payload.rootURL}`);
+    router.push(`./login/${payload.rootURL}`);
   },
 };
 
